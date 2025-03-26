@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yemek Tarifleri</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #f4f4f4; }
+        h1 { color: #333; }
+        .recipe { background: white; padding: 15px; margin: 10px auto; width: 60%; border-radius: 8px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); }
+        button { padding: 10px 20px; font-size: 16px; border: none; background-color: #007BFF; color: white; cursor: pointer; border-radius: 5px; margin-top: 20px; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🍴 Yemek Tarifleri</h1>
+    <div id="recipes"></div>
+    <button onclick="fetchRecipes()">Yeni Tarifler Getir</button>
+
+    <script>
+        const apiKey = 'YOUR_API_KEY';  // Buraya API anahtarınızı ekleyin
+
+        function fetchRecipes() {
+            const url = `https://api.spoonacular.com/recipes/random?number=5&apiKey=${apiKey}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const recipesDiv = document.getElementById('recipes');
+                    recipesDiv.innerHTML = "";  // Önceki tarifleri temizle
+
+                    // Tarifleri göster
+                    data.recipes.forEach(recipe => {
+                        const recipeElement = document.createElement('div');
+                        recipeElement.className = "recipe";
+                        recipeElement.innerHTML = `
+                            <h3>${recipe.title}</h3>
+                            <img src="${recipe.image}" alt="${recipe.title}" width="200">
+                            <p>${recipe.summary}</p>
+                            <a href="https://spoonacular.com/recipes/${recipe.title.replace(/\s+/g, '-').toLowerCase()}-${recipe.id}" target="_blank">Tarifi Görüntüle</a>
+                        `;
+                        recipesDiv.appendChild(recipeElement);
+                    });
+                })
+                .catch(error => {
+                    console.error("Veri çekme hatası:", error);
+                    const recipesDiv = document.getElementById('recipes');
+                    recipesDiv.innerHTML = "<p>Veri çekilirken bir hata oluştu. Lütfen tekrar deneyin.</p>";
+                });
+        }
+
+        fetchRecipes(); // Sayfa ilk açıldığında da verileri göster
+    </script>
+</body>
+</html>
