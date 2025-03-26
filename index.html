@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rastgele Köpek Fotoğrafı</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #f4f4f4; }
+        h1 { color: #333; }
+        .dog { background: white; padding: 15px; margin: 10px auto; width: 60%; border-radius: 8px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); }
+        button { padding: 10px 20px; font-size: 16px; border: none; background-color: #007BFF; color: white; cursor: pointer; border-radius: 5px; margin-top: 20px; }
+        button:hover { background-color: #0056b3; }
+        img { max-width: 100%; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>🐶 Rastgele Köpek Fotoğrafı</h1>
+    <div id="dogContainer"></div>
+    <button onclick="fetchDog()">Yeni Köpek Fotoğrafı Göster</button>
+
+    <script>
+        function fetchDog() {
+            const url = "https://dog.ceo/api/breeds/image/random";  // The Dog API URL
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const dogContainer = document.getElementById('dogContainer');
+                    dogContainer.innerHTML = ""; // Önceki köpek fotoğrafını temizle
+
+                    // Köpek fotoğrafı ve türünü ekle
+                    const dogElement = document.createElement('div');
+                    dogElement.className = "dog";
+                    dogElement.innerHTML = `
+                        <h3>Rastgele Köpek Fotoğrafı</h3>
+                        <img src="${data.message}" alt="Rastgele Köpek">
+                        <p>Köpek Türü: ${data.message.split('/')[4]}</p>
+                    `;
+                    dogContainer.appendChild(dogElement);
+                })
+                .catch(error => {
+                    console.error("Veri çekme hatası:", error);
+                    const dogContainer = document.getElementById('dogContainer');
+                    dogContainer.innerHTML = "<p>Veri çekilirken bir hata oluştu. Lütfen tekrar deneyin.</p>";
+                });
+        }
+
+        fetchDog(); // Sayfa ilk açıldığında da köpek fotoğrafı göster
+    </script>
+</body>
+</html>
