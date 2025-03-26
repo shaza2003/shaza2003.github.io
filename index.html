@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarihte Bugün Ne Oldu?</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; background-color: #f4f4f4; }
+        h1 { color: #333; }
+        .event { background: white; padding: 15px; margin: 10px auto; width: 60%; border-radius: 8px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); }
+        button { padding: 10px 20px; font-size: 16px; border: none; background-color: #007BFF; color: white; cursor: pointer; border-radius: 5px; margin-top: 20px; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>📅 Tarihte Bugün Ne Oldu?</h1>
+    <div id="events"></div>
+    <button onclick="fetchHistory()">Yeni Olayları Göster</button>
+
+    <script>
+        function fetchHistory() {
+            const today = new Date();
+            const month = today.getMonth() + 1; // Ay sayısı 1-12 arası, 0'dan başladığı için +1 ekledik
+            const day = today.getDate();
+            const url = `https://api.history.muffinlabs.com/v2/date/${month}/${day}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const eventsDiv = document.getElementById('events');
+                    eventsDiv.innerHTML = ""; // Önceki olayları temizle
+
+                    // Eğer veri varsa, ilk 5 olayı göster
+                    if (data.data.length > 0) {
+                        data.data.slice(0, 5).forEach(event => {
+                            const eventElement = document.createElement('div');
+                            eventElement.className = "event";
+                            eventElement.innerHTML = `<h3>${event.year}</h3><p>${event.text}</p>`;
+                            eventsDiv.appendChild(eventElement);
+                        });
+                    } else {
+                        eventsDiv.innerHTML = "<p>Bugün tarihte hiçbir önemli olay yok.</p>";
+                    }
+                })
+                .catch(error => {
+                    console.error("Veri çekme hatası:", error);
+                    const eventsDiv = document.getElementById('events');
+                    eventsDiv.innerHTML = "<p>Veri çekilirken bir hata oluştu. Lütfen tekrar deneyin.</p>";
+                });
+        }
+
+        fetchHistory(); // Sayfa ilk açıldığında da verileri göster
+    </script>
+</body>
+</html>
